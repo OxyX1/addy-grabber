@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Get Location</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2>Your Location:</h2>
+  <p id="location">Download Me!</p>
+  <button onclick="getLocation()">Get Location</button>
+
+  <script>
+    function getLocation() {
+      const locationElement = document.getElementById("location");
+      if (navigator.geolocation) {
+        locationElement.textContent = "Fetching location...";
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            locationElement.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+          },
+          (error) => {
+            locationElement.textContent = `Error: ${error.message}`;
+          }
+        );
+      } else {
+        locationElement.textContent = "Geolocation is not supported by your browser.";
+      }
+    }
+  </script>
+</body>
+</html>
