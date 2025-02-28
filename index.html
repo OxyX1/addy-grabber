@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Get Address from Geolocation</title>
+  <title>Send Address to Discord</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,10 +25,12 @@
 </head>
 <body>
   <h2>Your Address:</h2>
-  <p id="location">Click the button to get your address.</p>
-  <button onclick="getLocation()">Get Address</button>
+  <p id="location">Click the button to get your address and send it to Discord.</p>
+  <button onclick="getLocation()">Get Address & Send to Discord</button>
 
   <script>
+    const DISCORD_WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL"; // Replace this with your webhook URL
+
     function getLocation() {
       const locationElement = document.getElementById("location");
 
@@ -44,7 +46,9 @@
               .then(response => response.json())
               .then(data => {
                 if (data.display_name) {
-                  locationElement.textContent = `📍 Address: ${data.display_name}`;
+                  const address = data.display_name;
+                  locationElement.textContent = `📍 Address: ${address}`;
+                  sendToDiscord(`📡 New Location Update:\nLatitude: ${latitude}\nLongitude: ${longitude}\n📍 Address: ${address}`);
                 } else {
                   locationElement.textContent = "Unable to get address.";
                 }
@@ -62,6 +66,29 @@
       } else {
         locationElement.textContent = "Geolocation is not supported by your browser.";
       }
+    }
+
+    // Send data to Discord webhook
+    function sendToDiscord(message) {
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: message, // This is the message sent to the Discord channel
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("✅ Address sent to Discord successfully!");
+          } else {
+            console.error("❌ Failed to send address to Discord.");
+          }
+        })
+        .catch((error) => {
+          console.error("🚨 Error sending to Discord:", error);
+        });
     }
   </script>
 </body>
